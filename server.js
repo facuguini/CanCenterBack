@@ -111,8 +111,27 @@ if(cluster.isMaster) {
 
   app.get('/getDogMatch', function(req, res) {
     connect();
-    console.log(req.body.user_id)
     connection.query("SELECT * FROM dog WHERE user_id <> ?", 1, function(err, rows) {
+      if(!err)
+        res.send(rows);
+      else
+        console.log(err)
+    });
+  });
+
+  app.post('/match', function(req, res) {
+    connect();
+    connection.query("INSERT INTO doggies.match VALUES (?, ?)", [1, req.body.id], function(err, rows) {
+      if(!err)
+        res.send("OK");
+      else
+        console.log(err);
+    });
+  });
+
+  app.get('/getLostDogs', function(req, res) {
+    connect();
+    connection.query("SELECT * FROM found f JOIN dog d ON f.dog_id = d.id JOIN user u ON f.user_id = u.id", function(err, rows) {
       if(!err)
         res.send(rows);
       else
